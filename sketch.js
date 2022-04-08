@@ -35,6 +35,7 @@ var ground;
 var rope;
 var fruit, constraint1;
 var bg_img, fruit_img, rabbit_img;
+var triste, comendo, piscando;
 var rabbit;
 var scizor;
 
@@ -43,6 +44,15 @@ function preload()
   bg_img = loadImage('background.png');
   fruit_img = loadImage('melon.png');
   rabbit_img = loadImage('Rabbit-01.png');
+  piscando = loadAnimation("blink_1.png", "blink_2.png","blink_3.png");
+  comendo = loadAnimation("eat_0.png","eat_1.png","eat_2.png","eat_3.png", "eat_4.png");
+  triste = loadAnimation("sad_1.png","sad_2.png","sad_3.png");
+
+  //iniciar a animação e definir o loop
+  piscando.playing = true;
+  piscando.looping = true;
+  comendo.looping = false;
+
 }
 
 function setup() 
@@ -61,8 +71,14 @@ function setup()
   rope = new Rope(6,{x:250,y:30});
 
   //sprite do coelho
+  piscando.frameDelay = 20;
+  comendo.frameDelay = 20;
+
   rabbit = createSprite(400, 600, 100, 100);
-  rabbit.addImage(rabbit_img);
+  //rabbit.addImage(rabbit_img);
+  rabbit.addAnimation("piscando", piscando);
+  rabbit.addAnimation("comendo", comendo);
+  rabbit.changeAnimation("piscando");
   rabbit.scale = 0.2;
 
   //botão da tesoura
