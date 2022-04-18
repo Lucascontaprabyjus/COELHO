@@ -38,6 +38,14 @@ var bg_img, fruit_img, rabbit_img;
 var triste, comendo, piscando;
 var rabbit;
 var scizor;
+var ropeCut;
+var eatingFruit;
+var sadSong;
+var bgMusic;
+var airSong;
+var airButton;
+var mute;
+
 
 function preload()
 {
@@ -47,12 +55,17 @@ function preload()
   piscando = loadAnimation("blink_1.png", "blink_2.png","blink_3.png");
   comendo = loadAnimation("eat_0.png","eat_1.png","eat_2.png","eat_3.png", "eat_4.png");
   triste = loadAnimation("sad_1.png","sad_2.png","sad_3.png");
+  ropeCut = loadSound("rope_cut.mp3");
+  bgMusic = loadSound("sound1.mp3");
+  eatingFruit = loadSound("eating_sound.mp3");
+  sadSong = loadSound ("sad.wav");
+  airSong  = loadSound ("air.wav");
 
   //iniciar a animação e definir o loop
   piscando.playing = true;
   piscando.looping = true;
   comendo.looping = false;
-
+  triste.looping = false;
 }
 
 function setup() 
@@ -69,15 +82,20 @@ function setup()
   ground = new Ground(200,680,600,20);
   //criação do objeto corda a partir da classe Rope
   rope = new Rope(6,{x:250,y:30});
+  //som de fundo
+ // bgMusic.play();
+  bgMusic.setVolume(0.2)
 
   //sprite do coelho
-  piscando.frameDelay = 20;
-  comendo.frameDelay = 20;
+  piscando.frameDelay = 15;
+  comendo.frameDelay = 15;
+  triste.frameDelay = 15;
 
   rabbit = createSprite(400, 600, 100, 100);
   //rabbit.addImage(rabbit_img);
   rabbit.addAnimation("piscando", piscando);
   rabbit.addAnimation("comendo", comendo);
+  rabbit.addAnimation("triste", triste)
   rabbit.changeAnimation("piscando");
   rabbit.scale = 0.2;
 
@@ -86,6 +104,19 @@ function setup()
   scizor.position(250, 30);
   scizor.size(90, 90);
   scizor.mouseClicked(drop);
+
+  //botão do soprador
+  airButton = createImg("balloon.png");
+  airButton.position(60, 200)
+  airButton.size(150,90);
+  airButton.mouseClicked(pull);
+
+  //botão de mudo
+  mute = createImg("mute.png");
+  mute.position (450, 20);
+  mute.size (40, 40);
+  mute.mouseClicked(mutar);
+
 
   var fruit_options= {
     density: 0.001
@@ -118,10 +149,24 @@ function draw()
   //ellipse(fruit.position.x, fruit.position.y,15);
 
   //inserir a imagem da fruta
-  image(fruit_img, fruit.position.x, fruit.position.y, 60,60);
-  
+  if(fruit != null){
+  image (fruit_img, fruit.position.x, fruit.position.y, 60, 60);
+  }
   //atualização do mecanismo de física
   Engine.update(engine);
+
+  //chamada da função de colisão para coelho e fruta
+  if(collide(fruit, rabbit)== true){
+
+    rabbit.changeAnimation("comendo");
+
+  }
+  //chamada da função de colisão para fruta e solo
+  if(fruit != null && fruit.position.y >= 650 ){
+    
+    rabbit.changeAnimation("triste");
+   fruit = null;
+  }
   
   drawSprites();
  
@@ -134,4 +179,48 @@ function drop(){
   rope.break();
   constraint1.cut();
   constraint1 = null;
+}
+
+//função para colisão
+function collide(c1, c2){
+if(c1 != null){
+
+  var d = dist(c1.position.x, c1.position.y, c2.position.x, c2.position.y);
+
+if(d <= 80){
+
+  World.remove(world, fruit);
+  fruit = null;
+  return true;
+  
+
+}
+else{
+
+  return false;
+
+}
+}
+
+
+}
+
+//função para assoprar a fruta
+function pull(){
+  Matter.Body.applyForce(fruit, {x:0, y:0}, {x:0.03, y:0});
+  airSong.play();
+
+
+}
+//função para silenciar
+function mutar(){
+
+if(bgMusic.isPlaying()){
+bgMusic.stop();
+
+}
+else{
+bgMusic.play();
+
+}
 }
