@@ -45,6 +45,7 @@ var bgMusic;
 var airSong;
 var airButton;
 var mute;
+var canW, canH;
 
 
 function preload()
@@ -70,8 +71,23 @@ function preload()
 
 function setup() 
 {
+  //configuração do tamanho de tela
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(isMobile){ //verifica se é celular
+    canW = displayWidth;
+    canH = displayHeight;
+    //cria a tela
+    createCanvas(canW,canH);
+  }
+  else{
+    canW = windowWidth;
+    canH = windowHeight;
+    //cria a tela
+    createCanvas(canW,canH);
+  }
+
   //cria a tela
-  createCanvas(500,700);
+  //createCanvas(500,700);
   //aumento da taxa de quadros
   frameRate(80); //geralmente é 30 frames/seg
   //criação do mecanismo de física
@@ -79,9 +95,9 @@ function setup()
   //criação do mundo
   world = engine.world;
   //criação do objeto solo a partir da classe Ground
-  ground = new Ground(200,680,600,20);
+  ground = new Ground(200,canH,600,20);
   //criação do objeto corda a partir da classe Rope
-  rope = new Rope(6,{x:250,y:30});
+  rope = new Rope(6,{x:230,y:30});
   //som de fundo
  // bgMusic.play();
   bgMusic.setVolume(0.2)
@@ -91,7 +107,7 @@ function setup()
   comendo.frameDelay = 15;
   triste.frameDelay = 15;
 
-  rabbit = createSprite(400, 600, 100, 100);
+  rabbit = createSprite(200, canH-100, 100, 100);
   //rabbit.addImage(rabbit_img);
   rabbit.addAnimation("piscando", piscando);
   rabbit.addAnimation("comendo", comendo);
@@ -101,8 +117,8 @@ function setup()
 
   //botão da tesoura
   scizor = createImg("cut_button.png");
-  scizor.position(250, 30);
-  scizor.size(90, 90);
+  scizor.position(200, 20);
+  scizor.size(60, 60);
   scizor.mouseClicked(drop);
 
   //botão do soprador
@@ -113,7 +129,7 @@ function setup()
 
   //botão de mudo
   mute = createImg("mute.png");
-  mute.position (450, 20);
+  mute.position (270, 20);
   mute.size (40, 40);
   mute.mouseClicked(mutar);
 
@@ -141,7 +157,7 @@ function draw()
   background(51); 
 
   //inserir a imagem de fundo
-  image(bg_img, width/2, height/2, 500, 700);
+  image(bg_img, canW/2, canH/2, canW, canH);
 
   //mostrar os objetos das classes Ground e Rope
   ground.show();
@@ -157,25 +173,24 @@ function draw()
 
   //chamada da função de colisão para coelho e fruta
   if(collide(fruit, rabbit)== true){
-
     rabbit.changeAnimation("comendo");
-
+    eatingFruit.play();
   }
   //chamada da função de colisão para fruta e solo
-  if(fruit != null && fruit.position.y >= 650 ){
-    
+  if(fruit != null && fruit.position.y >= canH-100){
     rabbit.changeAnimation("triste");
-   fruit = null;
+    bgMusic.stop();
+    sadSong.play();
+    fruit = null;
   }
   
   drawSprites();
  
-   
 }
 
 //função para soltar a fruta
 function drop(){
-
+  ropeCut.play();
   rope.break();
   constraint1.cut();
   constraint1 = null;
@@ -184,21 +199,14 @@ function drop(){
 //função para colisão
 function collide(c1, c2){
 if(c1 != null){
-
   var d = dist(c1.position.x, c1.position.y, c2.position.x, c2.position.y);
-
 if(d <= 80){
-
   World.remove(world, fruit);
   fruit = null;
   return true;
-  
-
 }
 else{
-
   return false;
-
 }
 }
 
