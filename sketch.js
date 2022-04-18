@@ -195,6 +195,19 @@ function drop(){
   constraint1.cut();
   constraint1 = null;
 }
+  
+function drop2(){
+
+  rope2.break();
+  constraint1.cut();
+  constraint1 = null;
+}
+function drop3(){
+
+  rope3.break();
+  constraint1.cut();
+  constraint1 = null;
+}
 
 //função para colisão
 function collide(c1, c2){
