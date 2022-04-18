@@ -32,8 +32,8 @@ const Composites = Matter.Composites;
 var engine;
 var world;
 var ground;
-var rope;
-var fruit, constraint1;
+var rope, rope2, rope3;
+var fruit, constraint1, constraint2, constraint3;
 var bg_img, fruit_img, rabbit_img;
 var triste, comendo, piscando;
 var rabbit;
@@ -97,7 +97,9 @@ function setup()
   //criação do objeto solo a partir da classe Ground
   ground = new Ground(200,canH,600,20);
   //criação do objeto corda a partir da classe Rope
-  rope = new Rope(6,{x:230,y:30});
+  rope = new Rope(8,{x:230,y:30});
+  rope2 = new Rope(8,{x:20,y:90});
+  rope3 = new Rope(8,{x:300,y:400});
   //som de fundo
  // bgMusic.play();
   bgMusic.setVolume(0.2)
@@ -117,13 +119,22 @@ function setup()
 
   //botão da tesoura
   scizor = createImg("cut_button.png");
+  scizor2 = createImg("cut_button.png");
+  scizor3 = createImg("cut_button.png");
   scizor.position(200, 20);
+  scizor2.position(0, 70);
+  scizor3.position(270, 390);
   scizor.size(60, 60);
+  scizor2.size(60, 60);
+  scizor3.size(60, 60);
   scizor.mouseClicked(drop);
+  scizor2.mouseClicked(drop2);
+  scizor3.mouseClicked(drop3);
+
 
   //botão do soprador
   airButton = createImg("balloon.png");
-  airButton.position(60, 200)
+  airButton.position(20, 260)
   airButton.size(150,90);
   airButton.mouseClicked(pull);
 
@@ -143,7 +154,8 @@ function setup()
   Matter.Composite.add(rope.body,fruit);
   //criação do objeto restrição a partir da classe Link
   constraint1 = new link(rope,fruit);
-
+  constraint2 = new link(rope2,fruit);
+  constraint3 = new link(rope3,fruit);
   imageMode(CENTER);
   rectMode(CENTER);
   ellipseMode(RADIUS);
@@ -162,6 +174,8 @@ function draw()
   //mostrar os objetos das classes Ground e Rope
   ground.show();
   rope.show();
+  rope2.show();
+  rope3.show();
   //ellipse(fruit.position.x, fruit.position.y,15);
 
   //inserir a imagem da fruta
@@ -199,14 +213,14 @@ function drop(){
 function drop2(){
 
   rope2.break();
-  constraint1.cut();
-  constraint1 = null;
+  constraint2.cut();
+  constraint2 = null;
 }
 function drop3(){
 
   rope3.break();
-  constraint1.cut();
-  constraint1 = null;
+  constraint3.cut();
+  constraint3 = null;
 }
 
 //função para colisão
